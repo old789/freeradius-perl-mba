@@ -1,0 +1,40 @@
+
+Функціонал mac_based_vlan. 
+Засунути untagged порт в ту кількість вланів, яке потрібно роздати по МАС-ам.
+Створити базу відповідності mac - vlan и все. Пакети на порт мають приходити нетеговані.
+Тільки треба не забувати про те, що якійсь pvid залишиться на порту і мати на увазі цей момент.
+
+Налаштування світча:
+
+enable mac_based_access_control
+config mac_based_access_control authorization attributes radius enable local enable
+create mac_based_access_control guest_vlanid 141         # id vlan
+config mac_based_access_control guest_vlan ports 1
+config mac_based_access_control ports 1 state enable
+config mac_based_access_control ports  1 max_users 1024
+config mac_based_access_control ports  1 aging_time 5    # min
+config mac_based_access_control ports  1 block_time 300  # sec
+
+By default вважається, що MBA host based. Щоб працював port-based, треба окрім власне налаштувань порта,
+зробити стовпчик `mbamode` в таблиці `port` в nodes і в налаштуваннях радіуса вказати $conf{'port_based_mba_enable'}=1.
+В режимі port-based MAC адреса ігнорується.
+
+Вважається, що в таблиці IPSESSION тільки поточні сессії. Коли сессія закривається, вона переноситься в
+таблицю IPSESSION.<MONTH>.<YEAR> Сессія закривається зовнішним модулем по таймауту, або отриманню трапа.
+
+Гостьвий влан може бути водночас і призначаємим для авторизованих хостів.
+
+В радіусі налаштовується тільки секція authorize:
+
+authorize {
+        perl-mba
+        files
+        pap
+}
+
+В такому випадку спочатку буде перевіряться perl модулем, потім по файлу mods-config/files/authorize ( ex. users )
+
+001B215747ED    Cleartext-Password := "password"
+                Tunnel-Medium-Type = 6,
+                Tunnel-Type = VLAN,
+                Tunnel-Private-Group-Id = 138    <--- vlan

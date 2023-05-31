@@ -1,0 +1,55 @@
+# налаштування сайта радиуса 
+# знаходяться в raddb/sites-available/ic-mba
+# в raddb/sites-enabled/default:
+# server mba {
+# $INCLUDE        ${confdir}/sites-available/ic-mba
+# }
+
+
+listen {
+	type = auth
+	ipaddr = 172.16.0.25
+	port = 0
+}
+
+#listen {
+#	type = acct
+#	ipaddr = 172.16.0.25
+#	port = 0
+#}
+
+$INCLUDE        ${confdir}/clients-mba.conf
+
+authenticate {
+        Auth-Type PAP {
+                pap
+        }
+}
+
+authorize {
+	perl-mba
+	files
+        pap
+}
+
+preacct {
+#        acct_unique
+}
+
+accounting {
+#       radutmp
+}
+
+post-auth {
+}
+
+session {
+}
+
+pre-proxy {
+       pre_proxy_log
+}
+
+post-proxy {
+       post_proxy_log
+}

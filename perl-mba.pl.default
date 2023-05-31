@@ -1,0 +1,17 @@
+#!/usr/bin/perl -w
+
+#DB configuration
+$conf{"dbhost"}="dbhost";
+$conf{"dbname"}="dbname";
+$conf{"dbuser"}="radmba";
+$conf{"dbpassword"}="*********";
+$conf{'dbnodes'}='nodestest';
+
+#default password for MAC based access control
+$conf{'defMACpassw'}='suchaardvark';
+
+# Port based MAC based access control enable/disable (0/1 resp.)
+# Щоб працювало, потрібен стовпчик `mbamode` в таблиці `port` в БД `nodes`.
+# 0 - disable, 1 - host based, 2 - port based
+$conf{'port_based_mba_enable'}=0;
+
